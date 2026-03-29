@@ -1,30 +1,30 @@
 {
-    "app-id": "dev.rotstein.SmashedPumpkin",
-    "runtime": "org.gnome.Platform",
-    "runtime-version": "49",
-    "sdk": "org.gnome.Sdk",
-    "command": "smashed-pumpkin",
-    "finish-args": [
-      "--share=network",
-      "--share=ipc",
-      "--socket=wayland",
-      "--socket=fallback-x11",
-      "--device=dri",
-      "--talk-name=org.kde.StatusNotifierWatcher"
-    ],
-    "modules": [
-      "shared-modules/libayatana-appindicator/libayatana-appindicator-gtk3.json",
-      {
-        "name": "smashed-pumpkin",
-        "buildsystem": "meson",
-        "builddir": true,
-        "sources": [
-          {
-            "type": "git",
-            "url": "https://github.com/Rotstein007/smashed-pumpkin.git",
-            "commit": "759d3989da1fc30dcf3a19268f1ff2124c2fd14e"
-          }
-        ]
-      }
-    ]
-  }
+  "app-id": "dev.rotstein.SmashedPumpkin",
+  "runtime": "org.gnome.Platform",
+  "runtime-version": "49",
+  "sdk": "org.gnome.Sdk",
+  "command": "smashed-pumpkin",
+  "finish-args": [
+    "--share=network",
+    "--share=ipc",
+    "--socket=wayland",
+    "--socket=fallback-x11",
+    "--device=dri",
+    "--talk-name=org.kde.StatusNotifierWatcher"
+  ],
+  "modules": [
+    "shared-modules/libayatana-appindicator/libayatana-appindicator-gtk3.json",
+    {
+      "name": "smashed-pumpkin",
+      "buildsystem": "meson",
+      "builddir": true,
+      "sources": [
+        {
+          "type": "git",
+          "url": "https://github.com/Rotstein007/smashed-pumpkin.git",
+          "commit": "8f30ec110e4c834b86ad60e4933db725f54f5954"
+        }
+      ]
+    }
+  ]
+}
