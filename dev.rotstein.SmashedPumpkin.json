@@ -3,6 +3,12 @@
   "runtime": "org.gnome.Platform",
   "runtime-version": "49",
   "sdk": "org.gnome.Sdk",
+  "sdk-extensions": [
+    "org.freedesktop.Sdk.Extension.openjdk"
+  ],
+  "build-options": {
+    "libdir": "/app/lib"
+  },
   "command": "smashed-pumpkin",
   "finish-args": [
     "--share=network",
@@ -10,19 +16,114 @@
     "--socket=wayland",
     "--socket=fallback-x11",
     "--device=dri",
-    "--talk-name=org.kde.StatusNotifierWatcher"
+    "--talk-name=org.freedesktop.secrets",
+    "--talk-name=org.kde.StatusNotifierWatcher",
+    "--env=JAVA_HOME=/app/jre",
+    "--env=JDK_HOME=/app/jre",
+    "--env=PATH=/app/jre/bin:/app/bin:/usr/bin"
   ],
   "modules": [
     "shared-modules/libayatana-appindicator/libayatana-appindicator-gtk3.json",
     {
+      "name": "openjdk",
+      "buildsystem": "simple",
+      "build-commands": [
+        "/usr/lib/sdk/openjdk/install.sh"
+      ]
+    },
+    {
+      "name": "rust-toolchain",
+      "buildsystem": "simple",
+      "build-options": {
+        "no-debuginfo": true
+      },
+      "build-commands": [
+        "./rustc/install.sh --prefix=/app/lib/rust --disable-ldconfig",
+        "./cargo/install.sh --prefix=/app/lib/rust --disable-ldconfig",
+        "./rust-std/install.sh --prefix=/app/lib/rust --disable-ldconfig",
+        "./rust-std-wasip2/install.sh --prefix=/app/lib/rust --disable-ldconfig"
+      ],
+      "cleanup": [
+        "/lib/rust"
+      ],
+      "sources": [
+        {
+          "type": "archive",
+          "only-arches": ["x86_64"],
+          "dest": "rustc",
+          "url": "https://static.rust-lang.org/dist/2026-07-16/rustc-1.97.1-x86_64-unknown-linux-gnu.tar.xz",
+          "sha256": "9819d0a32d56bd339585319c80260e332779f5541fd66838ab7e016d6c814819"
+        },
+        {
+          "type": "archive",
+          "only-arches": ["aarch64"],
+          "dest": "rustc",
+          "url": "https://static.rust-lang.org/dist/2026-07-16/rustc-1.97.1-aarch64-unknown-linux-gnu.tar.xz",
+          "sha256": "b344b81f0cd4c2246c7da8b197fe7a339d7dd02bb15cb69b2524115d9c75224c"
+        },
+        {
+          "type": "archive",
+          "only-arches": ["x86_64"],
+          "dest": "cargo",
+          "url": "https://static.rust-lang.org/dist/2026-07-16/cargo-1.97.1-x86_64-unknown-linux-gnu.tar.xz",
+          "sha256": "e1be5f5ff7f7f80ca506fb65770b759edbdc6d303781ed71c5de8ec8a8394779"
+        },
+        {
+          "type": "archive",
+          "only-arches": ["aarch64"],
+          "dest": "cargo",
+          "url": "https://static.rust-lang.org/dist/2026-07-16/cargo-1.97.1-aarch64-unknown-linux-gnu.tar.xz",
+          "sha256": "8f70bcaccea5ba4db187c3fd4d64e24592b4e16af513497201f5909d61691dbe"
+        },
+        {
+          "type": "archive",
+          "only-arches": ["x86_64"],
+          "dest": "rust-std",
+          "url": "https://static.rust-lang.org/dist/2026-07-16/rust-std-1.97.1-x86_64-unknown-linux-gnu.tar.xz",
+          "sha256": "1c1e704ae80126b7de34f72ea2825f7fd01736dec20732faed47374b95282fba"
+        },
+        {
+          "type": "archive",
+          "only-arches": ["aarch64"],
+          "dest": "rust-std",
+          "url": "https://static.rust-lang.org/dist/2026-07-16/rust-std-1.97.1-aarch64-unknown-linux-gnu.tar.xz",
+          "sha256": "46aed8e63186350004d8ec6afca798811e6530b514352e5a8a26f3dc4939b3be"
+        },
+        {
+          "type": "archive",
+          "dest": "rust-std-wasip2",
+          "url": "https://static.rust-lang.org/dist/2026-07-16/rust-std-1.97.1-wasm32-wasip2.tar.xz",
+          "sha256": "e06b2e8ce0822674d257e9e78dd8d00cf7b154ad3493240e97b3c5ef4fad83b5"
+        }
+      ]
+    },
+    {
       "name": "smashed-pumpkin",
       "buildsystem": "meson",
       "builddir": true,
+      "config-opts": [
+        "-Dbuild_minimap_bridge=true"
+      ],
+      "build-options": {
+        "append-path": "/app/lib/rust/bin",
+        "env": {
+          "CARGO_HOME": "/run/build/smashed-pumpkin/cargo",
+          "CARGO_NET_OFFLINE": "true"
+        }
+      },
+      "run-tests": true,
       "sources": [
         {
           "type": "git",
           "url": "https://github.com/Rotstein007/smashed-pumpkin.git",
-          "commit": "d3803c298645f2bce0c2f6236fd85c8c155b4470"
+          "commit": "fb5d0b80cfb822e9f1e9eb918ff94f933d9de0ec"
+        },
+        {
+          "type": "archive",
+          "dest": "plugins/map-bridge",
+          "strip-components": 1,
+          "url": "https://github.com/Rotstein007/smashed-pumpkin/releases/download/v0.6.0/SmashedPumpkin-0.6.0-map-bridge-sources.tar.xz",
+          "sha256": "99a526eea8fa198774dd835a97198c326fb629c7b8132f2ad9ed5b66bde8c1ea"
         }
       ]
     }
